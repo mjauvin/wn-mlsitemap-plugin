@@ -1,0 +1,14 @@
+{
+    "name": "studioazura/sitemapshopaholic",
+    "type": "october-plugin",
+    "require": {
+        "lovata/oc-shopaholic-plugin": "dev-master",
+        "utopigs/seo": "dev-master"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/utopigstudio/octobercms-plugin-seo"
+        }
+    ]
+}
