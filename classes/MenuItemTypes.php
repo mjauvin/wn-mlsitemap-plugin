@@ -1,5 +1,7 @@
 <?php namespace StudioAzura\SitemapShopaholic\Classes;
 
+use Lang;
+
 class MenuItemTypes
 {
     public function subscribe($obEvent)

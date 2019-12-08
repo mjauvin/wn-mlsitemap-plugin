@@ -8,13 +8,13 @@ use System\Classes\PluginBase;
  */
 class Plugin extends PluginBase
 {
-    //public $require = ['Lovata.Shopaholic', 'Utopigs.Seo'];
+    public $require = ['Lovata.Shopaholic', 'Utopigs.Seo'];
 
 
     public function pluginDetails()
     {
         return [
-            'name'        => 'Sitemap for Shopaholic',
+            'name'        => 'Multilingual Sitemap Helper for Shopaholic',
             'description' => 'Adds "All Catalog Products/Categories" to SEO Sitemap item types',
             'author'      => 'StudioAzura',
             'icon'        => 'icon-sitemap'
