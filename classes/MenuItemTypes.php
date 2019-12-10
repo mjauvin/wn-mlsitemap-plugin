@@ -1,4 +1,4 @@
-<?php namespace StudioAzura\SitemapShopaholic\Classes;
+<?php namespace StudioAzura\MLSitemap\Classes;
 
 use ApplicationException;
 use System\Classes\PluginManager;
@@ -12,7 +12,7 @@ class MenuItemTypes
         $obEvent->listen('pages.menuitem.listTypes', function () {
             $items = [];
             foreach ($this->types as $type) {
-                $items[$type] = '[StudioAzura.Multilang-Sitemap] ' . trans('studioazura.sitemapshopaholic::lang.types.' . $type);
+                $items[$type] = '[StudioAzura.MLSitemap] ' . trans('studioazura.mlsitemap::lang.types.' . $type);
             }
             return $items;
         });

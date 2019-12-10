@@ -1,8 +1,7 @@
 {
-    "name": "studioazura/sitemapshopaholic",
+    "name": "studioazura/mlsitemap",
     "type": "october-plugin",
     "require": {
-        "lovata/oc-shopaholic-plugin": "dev-master",
         "utopigs/seo": "dev-master"
     },
     "repositories": [

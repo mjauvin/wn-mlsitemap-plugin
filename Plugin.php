@@ -1,4 +1,4 @@
-<?php namespace StudioAzura\SitemapShopaholic;
+<?php namespace StudioAzura\MLSitemap;
 
 use Event;
 use System\Classes\PluginBase;
@@ -10,7 +10,7 @@ class Plugin extends PluginBase
     public function pluginDetails()
     {
         return [
-            'name'        => 'Multilingual Sitemap Helper for Shopaholic',
+            'name'        => 'Multilingual Sitemap addon',
             'description' => 'Adds "All Catalog Products/Categories" to SEO Sitemap item types',
             'author'      => 'StudioAzura',
             'icon'        => 'icon-sitemap'
@@ -19,7 +19,7 @@ class Plugin extends PluginBase
 
     public function boot()
     {
-        Event::subscribe(\StudioAzura\SitemapShopaholic\Classes\MenuItemTypes::class);
+        Event::subscribe(\StudioAzura\MLSitemap\Classes\MenuItemTypes::class);
     }
 
 }
