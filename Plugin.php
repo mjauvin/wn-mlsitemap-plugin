@@ -5,7 +5,7 @@ use System\Classes\PluginBase;
 
 class Plugin extends PluginBase
 {
-    public $require = ['Lovata.Shopaholic', 'Utopigs.Seo'];
+    public $require = ['Utopigs.Seo'];
 
     public function pluginDetails()
     {
