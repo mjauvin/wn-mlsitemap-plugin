@@ -3,13 +3,9 @@
 use Event;
 use System\Classes\PluginBase;
 
-/**
- * SitemapShopaholic Plugin Information File
- */
 class Plugin extends PluginBase
 {
     public $require = ['Lovata.Shopaholic', 'Utopigs.Seo'];
-
 
     public function pluginDetails()
     {
@@ -21,11 +17,6 @@ class Plugin extends PluginBase
         ];
     }
 
-    /**
-     * Boot method, called right before the request route.
-     *
-     * @return array
-     */
     public function boot()
     {
         Event::subscribe(\StudioAzura\SitemapShopaholic\Classes\MenuItemTypes::class);
