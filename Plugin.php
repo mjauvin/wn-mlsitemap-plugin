@@ -5,7 +5,7 @@ use System\Classes\PluginBase;
 
 class Plugin extends PluginBase
 {
-    public $require = ['Utopigs.Seo'];
+    public $require = ['Rainlab.Sitemap'];
 
     public function pluginDetails()
     {

@@ -2,6 +2,8 @@
 
 use ApplicationException;
 use System\Classes\PluginManager;
+use Cms\Classes\Page;
+use Cms\Classes\Theme;
 
 class MenuItemTypes
 {
@@ -21,8 +23,8 @@ class MenuItemTypes
             if (!in_array($type, $this->types)) {
                 return;
             }
-            $theme = \Cms\Classes\Theme::getActiveTheme();
-            $pages = \Cms\Classes\Page::listInTheme($theme, true);
+            $theme = Theme::getActiveTheme();
+            $pages = Page::listInTheme($theme, true);
             return [
                 'dynamicItems' => true,
                 'cmsPages' => $pages,
@@ -34,7 +36,7 @@ class MenuItemTypes
         });
     }
 
-    public function resolveMenuItem($type, $item, $url, $theme)
+    protected function resolveMenuItem($type, $item, $url, $theme)
     {
         if (!in_array($type, $this->types)) {
             return null;
@@ -69,7 +71,7 @@ class MenuItemTypes
         }
 
         $pageName = $item->cmsPage;
-        $cmsPage = \Cms\Classes\Page::loadCached($theme, $pageName);
+        $cmsPage = Page::loadCached($theme, $pageName);
 
         $result = ['items' => []];
 
@@ -80,7 +82,7 @@ class MenuItemTypes
         }
         foreach ($items as $item) {
             $pageUrl = $cmsPage->url($pageName, ['slug' => $item->slug]);
-            $result['items'][] =  \Utopigs\Seo\Models\Sitemap::getMenuItem($cmsPage, $item, 'slug');
+            $result['items'][] =  \StudioAzura\MlSitemap\Classes\Definition::getMenuItem($cmsPage, $item, 'slug');
         }
         return $result;
     }

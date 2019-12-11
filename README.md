@@ -1,4 +1,6 @@
-uses Utopigs.Seo to add the following listTypes:
+Add Multilang capabilities to Rainlab.Sitemap plugin
+
+Add the following listTypes:
 
 - All Catalog Categories
 - All Catalog Products
