@@ -44,7 +44,7 @@ class Definition extends \RainLab\Sitemap\Models\Definition
              * Registered sitemap type
              */
             else {
-                $apiResult = Event::fire('pages.menuitem.resolveItem', [$item->type, $item, $currentUrl, $theme]);
+                $apiResult = Event::fire('studioazura.mlsitemap.resolveItem', [$item->type, $item, $currentUrl, $theme]);
 
                 if (!is_array($apiResult)) {
                     continue;

@@ -16,7 +16,7 @@ class MenuItemTypes
     {
         $obEvent->listen('pages.menuitem.listTypes', function () {
             $items = [];
-            foreach ($this->types as $type) {
+            foreach ($this->types['catalog'] as $type) {
                 $items[$type] = '[StudioAzura.MLSitemap] ' . trans('studioazura.mlsitemap::lang.types.' . $type);
             }
             return $items;
@@ -34,7 +34,7 @@ class MenuItemTypes
             ];
         });
 
-        $obEvent->listen('pages.menuitem.resolveItem', function ($type, $item, $url, $theme) {
+        $obEvent->listen('studioazura.mlsitemap.resolveItem', function ($type, $item, $url, $theme) {
             return self::resolveMenuItem($type, $item, $url, $theme);
         });
     }
@@ -42,9 +42,9 @@ class MenuItemTypes
     protected function resolveMenuItem($type, $item, $url, $theme)
     {
         if (in_array($type, $this->types['catalog'])) {
-            return resolveCatalogMenuItems($type, $item, $url, $theme);
+            return self::resolveCatalogMenuItems($type, $item, $url, $theme);
         } else if (in_array($type, $this->types['blog'])) {
-            return resolveBlogMenuItems($type, $item, $url, $theme);
+            return self::resolveBlogMenuItems($type, $item, $url, $theme);
         } else {
             return null;
         }
@@ -71,6 +71,11 @@ class MenuItemTypes
             throw new ApplicationException('You need to installone of the following catalog plugin: ' . implode(', ', $supportedPlugins));
         }
 
+        $pageName = $item->cmsPage;
+        $cmsPage = Page::loadCached($theme, $pageName);
+
+        $result = ['items' => []];
+
         $filter = 'active';
         if ($type == 'all-catalog-categories') {
             $class = sprintf('%s\\Models\\Category', $classPrefix);
@@ -84,17 +89,11 @@ class MenuItemTypes
             }
         }
 
-        $pageName = $item->cmsPage;
-        $cmsPage = Page::loadCached($theme, $pageName);
-
-        $result = ['items' => []];
-
+        $query = $class::orderBy('name', 'ASC');
         if ($filter) {
-            $items = $class::orderBy('name', 'ASC')->where($filter, true)->get();
-        } else {
-            $items = $class::orderBy('name', 'ASC')->get();
+            $query = $query->where($filter, true);
         }
-        foreach ($items as $item) {
+        foreach ($query->get() as $item) {
             $pageUrl = $cmsPage->url($pageName, ['slug' => $item->slug]);
             $result['items'][] =  \StudioAzura\MlSitemap\Classes\Definition::getMenuItem($cmsPage, $item, 'slug');
         }
@@ -103,17 +102,10 @@ class MenuItemTypes
 
     protected function resolveBlogMenuItems($type, $item, $url, $theme)
     {
-        if (!in_array($type, $this->types['blog'])) {
-            return null;
-        }
 
-        $filter = '';
-        $classPrefix = '\\Rainlab\\Blog';
-        if ($type == 'all-blog-categories') {
-            $class = sprintf('%s\\Models\\Category', $classPrefix);
-        } else if ($type == 'all-blog-posts') {
-            $class = sprintf('%s\\Models\\Product', $classPrefix);
-            $filter = 'published';
+        // TODO: need to fix the check if rainlab.blog plugin is active
+        if (!in_array($type, $this->types['blog']) || !PluginManager::instance()->exists('rainlab.Blog')) {
+            return null;
         }
 
         $pageName = $item->cmsPage;
@@ -121,12 +113,17 @@ class MenuItemTypes
 
         $result = ['items' => []];
 
-        $query = $class::orderBy('name', 'ASC');
-        if ($filter) {
-            $query = $query->where($filter, true);
+        $filter = '';
+        $classPrefix = '\\Rainlab\\Blog';
+        if ($type == 'all-blog-categories') {
+            $class = sprintf('%s\\Models\\Category', $classPrefix);
+            $query = $class::orderBy('name', 'ASC');
+        } else if ($type == 'all-blog-posts') {
+            $class = sprintf('%s\\Models\\Post', $classPrefix);
+            $query = $class::isPublished()->orderBy('title', 'ASC');
         }
-        $items = $query->get();
-        foreach ($items as $item) {
+
+        foreach ($query->get() as $item) {
             $pageUrl = $cmsPage->url($pageName, ['slug' => $item->slug]);
             $result['items'][] =  \StudioAzura\MlSitemap\Classes\Definition::getMenuItem($cmsPage, $item, 'slug');
         }
