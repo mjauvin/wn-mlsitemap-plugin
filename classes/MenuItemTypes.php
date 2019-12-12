@@ -7,7 +7,10 @@ use Cms\Classes\Theme;
 
 class MenuItemTypes
 {
-    private $types = ['all-catalog-categories','all-catalog-products'];
+    private $types = [
+        'blog' => ['all-blog-categories', 'all-blog-posts'],
+        'catalog' => ['all-catalog-categories', 'all-catalog-products'],
+    ];
 
     public function subscribe($obEvent)
     {
@@ -38,7 +41,18 @@ class MenuItemTypes
 
     protected function resolveMenuItem($type, $item, $url, $theme)
     {
-        if (!in_array($type, $this->types)) {
+        if (in_array($type, $this->types['catalog'])) {
+            return resolveCatalogMenuItems($type, $item, $url, $theme);
+        } else if (in_array($type, $this->types['blog'])) {
+            return resolveBlogMenuItems($type, $item, $url, $theme);
+        } else {
+            return null;
+        }
+    }
+
+    protected function resolveCatalogMenuItems($type, $item, $url, $theme)
+    {
+        if (!in_array($type, $this->types['catalog'])) {
             return null;
         }
 
@@ -80,6 +94,38 @@ class MenuItemTypes
         } else {
             $items = $class::orderBy('name', 'ASC')->get();
         }
+        foreach ($items as $item) {
+            $pageUrl = $cmsPage->url($pageName, ['slug' => $item->slug]);
+            $result['items'][] =  \StudioAzura\MlSitemap\Classes\Definition::getMenuItem($cmsPage, $item, 'slug');
+        }
+        return $result;
+    }
+
+    protected function resolveBlogMenuItems($type, $item, $url, $theme)
+    {
+        if (!in_array($type, $this->types['blog'])) {
+            return null;
+        }
+
+        $filter = '';
+        $classPrefix = '\\Rainlab\\Blog';
+        if ($type == 'all-blog-categories') {
+            $class = sprintf('%s\\Models\\Category', $classPrefix);
+        } else if ($type == 'all-blog-posts') {
+            $class = sprintf('%s\\Models\\Product', $classPrefix);
+            $filter = 'published';
+        }
+
+        $pageName = $item->cmsPage;
+        $cmsPage = Page::loadCached($theme, $pageName);
+
+        $result = ['items' => []];
+
+        $query = $class::orderBy('name', 'ASC');
+        if ($filter) {
+            $query = $query->where($filter, true);
+        }
+        $items = $query->get();
         foreach ($items as $item) {
             $pageUrl = $cmsPage->url($pageName, ['slug' => $item->slug]);
             $result['items'][] =  \StudioAzura\MlSitemap\Classes\Definition::getMenuItem($cmsPage, $item, 'slug');
