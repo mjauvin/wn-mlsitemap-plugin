@@ -60,7 +60,8 @@ class MenuItemTypes
         $classPrefix = null;
         $supportedPlugins = ['Lovata.Shopaholic', 'Offline.Mall'];
         foreach ($supportedPlugins as $catalogPlugin) {
-            if (PluginManager::instance()->hasPlugin($catalogPlugin)) {
+            $plugin = PluginManager::instance()->findByIdentifier($catalogPlugin);
+            if ($plugin && !$plugin->disabled) {
                 list($author, $plugin) = explode('.', $catalogPlugin);
                 $classPrefix = sprintf('\\%s\\%s', $author, $plugin);
                 $catalog = $catalogPlugin;
