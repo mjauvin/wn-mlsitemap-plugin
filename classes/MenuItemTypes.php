@@ -1,5 +1,6 @@
 <?php namespace StudioAzura\MLSitemap\Classes;
 
+use Flash;
 use ApplicationException;
 use System\Classes\PluginManager;
 use Cms\Classes\Page;
@@ -7,10 +8,27 @@ use Cms\Classes\Theme;
 
 class MenuItemTypes
 {
-    private $types = [
+    protected $types = [
         'blog' => ['all-blog-categories', 'all-blog-posts'],
         'catalog' => ['all-catalog-categories', 'all-catalog-products'],
     ];
+
+    protected $manager;
+    public $supportedPlugins = ['Lovata.Shopaholic', 'OFFLINE.Mall'];
+
+    public function __construct() {
+        $this->manager = PluginManager::instance();
+        $catalog = false;
+        foreach ($this->supportedPlugins as $plugin) {
+            if ($catalog = $this->manager->exists($plugin)) {
+                break;
+            }
+        }
+        if (!$catalog) {
+            #Flash::error('In order to use MLSitemap, You need to installone of the following catalog plugin: ' . implode(', ', $this->supportedPlugins));
+            trace_log('In order to use MLSitemap, You need to installone of the following catalog plugin: ' . implode(', ', $this->supportedPlugins));
+        }
+    }
 
     public function subscribe($obEvent)
     {
@@ -23,7 +41,7 @@ class MenuItemTypes
         });
 
         $obEvent->listen('pages.menuitem.getTypeInfo', function ($type) {
-            if (!in_array($type, $this->types)) {
+            if (!in_array($type, $this->types['catalog'])) {
                 return;
             }
             $theme = Theme::getActiveTheme();
@@ -52,16 +70,14 @@ class MenuItemTypes
 
     protected function resolveCatalogMenuItems($type, $item, $url, $theme)
     {
-        if (!in_array($type, $this->types['catalog'])) {
+        if (!(in_array($type, $this->types['catalog']))) {
             return null;
         }
 
         $catalog = null;
         $classPrefix = null;
-        $supportedPlugins = ['Lovata.Shopaholic', 'Offline.Mall'];
-        foreach ($supportedPlugins as $catalogPlugin) {
-            $plugin = PluginManager::instance()->findByIdentifier($catalogPlugin);
-            if ($plugin && !$plugin->disabled) {
+        foreach ($this->supportedPlugins as $catalogPlugin) {
+            if ($this->manager->exists($catalogPlugin)) {
                 list($author, $plugin) = explode('.', $catalogPlugin);
                 $classPrefix = sprintf('\\%s\\%s', $author, $plugin);
                 $catalog = $catalogPlugin;
@@ -69,10 +85,12 @@ class MenuItemTypes
             }
         }
         if (!$classPrefix) {
-            throw new ApplicationException('You need to installone of the following catalog plugin: ' . implode(', ', $supportedPlugins));
+            return null;
         }
 
-        $pageName = $item->cmsPage;
+        if (!($pageName = $item->cmsPage)) {
+            return null;
+        }
         $cmsPage = Page::loadCached($theme, $pageName);
 
         $result = ['items' => []];
@@ -80,12 +98,12 @@ class MenuItemTypes
         $filter = 'active';
         if ($type == 'all-catalog-categories') {
             $class = sprintf('%s\\Models\\Category', $classPrefix);
-            if ($catalog == 'Offline.Mall') {
+            if ($catalog == 'OFFLINE.Mall') {
                 $filter = '';
             }
         } else if ($type == 'all-catalog-products') {
             $class = sprintf('%s\\Models\\Product', $classPrefix);
-            if ($catalog == 'Offline.Mall') {
+            if ($catalog == 'OFFLINE.Mall') {
                 $filter = 'published';
             }
         }
@@ -96,15 +114,14 @@ class MenuItemTypes
         }
         foreach ($query->get() as $item) {
             $pageUrl = $cmsPage->url($pageName, ['slug' => $item->slug]);
-            $result['items'][] =  \StudioAzura\MlSitemap\Classes\Definition::getMenuItem($cmsPage, $item, 'slug');
+            $result['items'][] =  Definition::getMenuItem($cmsPage, $item, 'slug');
         }
         return $result;
     }
 
     protected function resolveBlogMenuItems($type, $item, $url, $theme)
     {
-        $plugin = PluginManager::instance()->findByIdentifier('RainLab.Blog');
-        if (!(in_array($type, $this->types['blog']) && $plugin && !$plugin->disabled)) {
+        if (!(in_array($type, $this->types['blog']) && $this->manager->exists('RainLab.Blog'))) {
             return null;
         }
 
@@ -114,7 +131,7 @@ class MenuItemTypes
         $result = ['items' => []];
 
         $filter = '';
-        $classPrefix = '\\Rainlab\\Blog';
+        $classPrefix = '\\RainLab\\Blog';
         if ($type == 'all-blog-categories') {
             $class = sprintf('%s\\Models\\Category', $classPrefix);
             $query = $class::orderBy('name', 'ASC');
@@ -125,7 +142,7 @@ class MenuItemTypes
 
         foreach ($query->get() as $item) {
             $pageUrl = $cmsPage->url($pageName, ['slug' => $item->slug]);
-            $result['items'][] =  \StudioAzura\MlSitemap\Classes\Definition::getMenuItem($cmsPage, $item, 'slug');
+            $result['items'][] =  Definition::getMenuItem($cmsPage, $item, 'slug');
         }
         return $result;
     }
