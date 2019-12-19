@@ -102,9 +102,8 @@ class MenuItemTypes
 
     protected function resolveBlogMenuItems($type, $item, $url, $theme)
     {
-
-        // TODO: need to fix the check if rainlab.blog plugin is active
-        if (!in_array($type, $this->types['blog']) || !PluginManager::instance()->exists('rainlab.Blog')) {
+        $plugin = PluginManager::instance()->findByIdentifier('RainLab.Blog');
+        if (!(in_array($type, $this->types['blog']) && $plugin && !$plugin->disabled)) {
             return null;
         }
 
