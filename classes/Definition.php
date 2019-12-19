@@ -1,14 +1,13 @@
 <?php namespace StudioAzura\MLSitemap\Classes;
 
 use Url;
-use Config;
-use Model;
 use Event;
 use Request;
-use DOMDocument;
 use Cms\Classes\Page;
 use Cms\Classes\Theme;
 use October\Rain\Router\Router;
+use RainLab\Translate\Models\Locale;
+use RainLab\Translate\Classes\Translator;
 
 /**
  * Definition Model
@@ -26,9 +25,9 @@ class Definition extends \RainLab\Sitemap\Models\Definition
 
         $alternateLocales = [];
 
-        $translator = \RainLab\Translate\Classes\Translator::instance();
-        $defaultLocale = \RainLab\Translate\Models\Locale::getDefault()->code;
-        $alternateLocales = array_keys(\RainLab\Translate\Models\Locale::listEnabled());
+        $translator = Translator::instance();
+        $defaultLocale = Locale::getDefault()->code;
+        $alternateLocales = array_keys(Locale::listEnabled());
         $translator->setLocale($defaultLocale, false);
 
         /*
@@ -45,9 +44,8 @@ class Definition extends \RainLab\Sitemap\Models\Definition
              * Registered sitemap type
              */
             else {
-                if (in_array($item->type, MenuItemTypes::$types['blog'])) {
-                    $apiResult = MenuItemTypes::resolveMenuItem($item->type, $item, $currentUrl, $theme);
-                } else {
+                $obj = new MenuItemTypes();
+                if (!($apiResult = $obj->resolveMenuItem($item->type, $item, $currentUrl, $theme))) {
                     $apiResult = Event::fire('pages.menuitem.resolveItem', [$item->type, $item, $currentUrl, $theme]);
                 }
 
@@ -209,14 +207,14 @@ class Definition extends \RainLab\Sitemap\Models\Definition
         return $this->urlSet = $urlSet;
     }
 
-    protected static function getMenuItem($page, $menuItem, $paramName)
+    public static function getMenuItem($page, $menuItem, $paramName)
     {
         $result = [];
 
-        $defaultLocale = \RainLab\Translate\Models\Locale::getDefault()->code;
+        $defaultLocale = Locale::getDefault()->code;
         $pageUrl = self::getPageLocaleUrl($page, $menuItem, $defaultLocale, [$paramName => 'slug']);
 
-        $alternateLocales = array_keys(\RainLab\Translate\Models\Locale::listEnabled());
+        $alternateLocales = array_keys(Locale::listEnabled());
 
         if (count($alternateLocales) > 1) {
             foreach ($alternateLocales as $locale) {
@@ -241,7 +239,7 @@ class Definition extends \RainLab\Sitemap\Models\Definition
      */
     protected static function getPageLocaleUrl($page, $item, $locale, $paramMap)
     {
-        $translator = \RainLab\Translate\Classes\Translator::instance();
+        $translator = Translator::instance();
 
         if ($page->hasTranslatablePageUrl($locale)) {
             $page->rewriteTranslatablePageUrl($locale);

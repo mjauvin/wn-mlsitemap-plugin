@@ -8,12 +8,19 @@ use Cms\Classes\Theme;
 
 class MenuItemTypes
 {
-    public static $types = [
+    static $types = [
         'blog' => ['all-blog-categories', 'all-blog-posts'],
         'catalog' => ['all-catalog-categories', 'all-catalog-products'],
     ];
 
     static $supportedPlugins = ['Lovata.Shopaholic', 'OFFLINE.Mall'];
+
+    protected $manager = null;
+
+    public function __construct()
+    {
+        $this->manager = PluginManager::instance();
+    }
 
     public function subscribe($obEvent)
     {
@@ -38,22 +45,22 @@ class MenuItemTypes
         });
 
         $obEvent->listen('pages.menuitem.resolveItem', function ($type, $item, $url, $theme) {
-            return self::resolveMenuItem($type, $item, $url, $theme);
+            return $this->resolveMenuItem($type, $item, $url, $theme);
         });
     }
 
-    public static function resolveMenuItem($type, $item, $url, $theme)
+    public function resolveMenuItem($type, $item, $url, $theme)
     {
         if (in_array($type, self::$types['catalog'])) {
-            return self::resolveCatalogMenuItems($type, $item, $url, $theme);
+            return $this->resolveCatalogMenuItems($type, $item, $url, $theme);
         } else if (in_array($type, self::$types['blog'])) {
-            return self::resolveBlogMenuItems($type, $item, $url, $theme);
+            return $this->resolveBlogMenuItems($type, $item, $url, $theme);
         } else {
             return null;
         }
     }
 
-    protected static function resolveCatalogMenuItems($type, $item, $url, $theme)
+    public function resolveCatalogMenuItems($type, $item, $url, $theme)
     {
         if (!(in_array($type, self::$types['catalog']))) {
             return null;
@@ -61,22 +68,18 @@ class MenuItemTypes
 
         $catalog = null;
         $classPrefix = null;
-        $manager = PluginManager::instance();
         foreach (self::$supportedPlugins as $catalogPlugin) {
-            if ($manager->exists($catalogPlugin)) {
+            if ($this->manager->exists($catalogPlugin)) {
                 list($author, $plugin) = explode('.', $catalogPlugin);
                 $classPrefix = sprintf('\\%s\\%s', $author, $plugin);
                 $catalog = $catalogPlugin;
                 break;
             }
         }
-        if (!$classPrefix) {
+        if (!($classPrefix && ($pageName = $item->cmsPage))) {
             return null;
         }
 
-        if (!($pageName = $item->cmsPage)) {
-            return null;
-        }
         $cmsPage = Page::loadCached($theme, $pageName);
 
         $result = ['items' => []];
@@ -102,17 +105,19 @@ class MenuItemTypes
             $pageUrl = $cmsPage->url($pageName, ['slug' => $item->slug]);
             $result['items'][] =  Definition::getMenuItem($cmsPage, $item, 'slug');
         }
-        return $result;
+        return $result['items'];
     }
 
-    protected function resolveBlogMenuItems($type, $item, $url, $theme)
+    public function resolveBlogMenuItems($type, $item, $url, $theme)
     {
-        $manager = PluginManager::instance();
-        if (!(in_array($type, self::$types['blog']) && $manager->exists('RainLab.Blog'))) {
+        if (!(in_array($type, self::$types['blog']) && $this->manager->exists('RainLab.Blog'))) {
             return null;
         }
 
-        $pageName = $item->cmsPage;
+        if (!($pageName = $item->cmsPage)) {
+            return null;
+        }
+
         $cmsPage = Page::loadCached($theme, $pageName);
 
         $result = ['items' => []];
@@ -131,6 +136,6 @@ class MenuItemTypes
             $pageUrl = $cmsPage->url($pageName, ['slug' => $item->slug]);
             $result['items'][] =  Definition::getMenuItem($cmsPage, $item, 'slug');
         }
-        return $result;
+        return $result['items'];
     }
 }
