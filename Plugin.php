@@ -19,6 +19,7 @@ class Plugin extends PluginBase
 
     public function boot()
     {
+        Event::subscribe(\StudioAzura\MLSitemap\Classes\BootHandler::class);
         Event::subscribe(\StudioAzura\MLSitemap\Classes\MenuItemTypes::class);
     }
 

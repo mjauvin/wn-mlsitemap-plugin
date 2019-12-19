@@ -6,6 +6,7 @@ use Model;
 use Event;
 use Request;
 use DOMDocument;
+use Cms\Classes\Page;
 use Cms\Classes\Theme;
 use October\Rain\Router\Router;
 
@@ -44,7 +45,11 @@ class Definition extends \RainLab\Sitemap\Models\Definition
              * Registered sitemap type
              */
             else {
-                $apiResult = Event::fire('studioazura.mlsitemap.resolveItem', [$item->type, $item, $currentUrl, $theme]);
+                if (in_array($item->type, MenuItemTypes::$types['blog'])) {
+                    $apiResult = MenuItemTypes::resolveMenuItem($item->type, $item, $currentUrl, $theme);
+                } else {
+                    $apiResult = Event::fire('pages.menuitem.resolveItem', [$item->type, $item, $currentUrl, $theme]);
+                }
 
                 if (!is_array($apiResult)) {
                     continue;

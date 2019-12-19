@@ -8,40 +8,25 @@ use Cms\Classes\Theme;
 
 class MenuItemTypes
 {
-    protected $types = [
+    public static $types = [
         'blog' => ['all-blog-categories', 'all-blog-posts'],
         'catalog' => ['all-catalog-categories', 'all-catalog-products'],
     ];
 
-    protected $manager;
-    public $supportedPlugins = ['Lovata.Shopaholic', 'OFFLINE.Mall'];
-
-    public function __construct() {
-        $this->manager = PluginManager::instance();
-        $catalog = false;
-        foreach ($this->supportedPlugins as $plugin) {
-            if ($catalog = $this->manager->exists($plugin)) {
-                break;
-            }
-        }
-        if (!$catalog) {
-            #Flash::error('In order to use MLSitemap, You need to installone of the following catalog plugin: ' . implode(', ', $this->supportedPlugins));
-            trace_log('In order to use MLSitemap, You need to installone of the following catalog plugin: ' . implode(', ', $this->supportedPlugins));
-        }
-    }
+    static $supportedPlugins = ['Lovata.Shopaholic', 'OFFLINE.Mall'];
 
     public function subscribe($obEvent)
     {
         $obEvent->listen('pages.menuitem.listTypes', function () {
             $items = [];
-            foreach ($this->types['catalog'] as $type) {
+            foreach (self::$types['catalog'] as $type) {
                 $items[$type] = '[StudioAzura.MLSitemap] ' . trans('studioazura.mlsitemap::lang.types.' . $type);
             }
             return $items;
         });
 
         $obEvent->listen('pages.menuitem.getTypeInfo', function ($type) {
-            if (!in_array($type, $this->types['catalog'])) {
+            if (!in_array($type, self::$types['catalog'])) {
                 return;
             }
             $theme = Theme::getActiveTheme();
@@ -52,32 +37,33 @@ class MenuItemTypes
             ];
         });
 
-        $obEvent->listen('studioazura.mlsitemap.resolveItem', function ($type, $item, $url, $theme) {
+        $obEvent->listen('pages.menuitem.resolveItem', function ($type, $item, $url, $theme) {
             return self::resolveMenuItem($type, $item, $url, $theme);
         });
     }
 
-    protected function resolveMenuItem($type, $item, $url, $theme)
+    public static function resolveMenuItem($type, $item, $url, $theme)
     {
-        if (in_array($type, $this->types['catalog'])) {
+        if (in_array($type, self::$types['catalog'])) {
             return self::resolveCatalogMenuItems($type, $item, $url, $theme);
-        } else if (in_array($type, $this->types['blog'])) {
+        } else if (in_array($type, self::$types['blog'])) {
             return self::resolveBlogMenuItems($type, $item, $url, $theme);
         } else {
             return null;
         }
     }
 
-    protected function resolveCatalogMenuItems($type, $item, $url, $theme)
+    protected static function resolveCatalogMenuItems($type, $item, $url, $theme)
     {
-        if (!(in_array($type, $this->types['catalog']))) {
+        if (!(in_array($type, self::$types['catalog']))) {
             return null;
         }
 
         $catalog = null;
         $classPrefix = null;
-        foreach ($this->supportedPlugins as $catalogPlugin) {
-            if ($this->manager->exists($catalogPlugin)) {
+        $manager = PluginManager::instance();
+        foreach (self::$supportedPlugins as $catalogPlugin) {
+            if ($manager->exists($catalogPlugin)) {
                 list($author, $plugin) = explode('.', $catalogPlugin);
                 $classPrefix = sprintf('\\%s\\%s', $author, $plugin);
                 $catalog = $catalogPlugin;
@@ -121,7 +107,8 @@ class MenuItemTypes
 
     protected function resolveBlogMenuItems($type, $item, $url, $theme)
     {
-        if (!(in_array($type, $this->types['blog']) && $this->manager->exists('RainLab.Blog'))) {
+        $manager = PluginManager::instance();
+        if (!(in_array($type, self::$types['blog']) && $manager->exists('RainLab.Blog'))) {
             return null;
         }
 
