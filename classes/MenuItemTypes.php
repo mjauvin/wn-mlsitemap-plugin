@@ -102,7 +102,6 @@ class MenuItemTypes
             $query = $query->where($filter, true);
         }
         foreach ($query->get() as $item) {
-            $pageUrl = $cmsPage->url($pageName, ['slug' => $item->slug]);
             $result['items'][] =  Definition::getMenuItem($cmsPage, $item, 'slug');
         }
         return $result['items'];
@@ -133,7 +132,6 @@ class MenuItemTypes
         }
 
         foreach ($query->get() as $item) {
-            $pageUrl = $cmsPage->url($pageName, ['slug' => $item->slug]);
             $result['items'][] =  Definition::getMenuItem($cmsPage, $item, 'slug');
         }
         return $result['items'];
