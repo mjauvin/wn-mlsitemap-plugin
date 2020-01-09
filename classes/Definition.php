@@ -129,13 +129,19 @@ class Definition extends \RainLab\Sitemap\Models\Definition
         $urlSet = $this->makeUrlSet();
         $xml = $this->makeXmlObject();
         $xml->appendChild($urlSet);
-        $xml->formatOutput = true;
+        if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot/') === false) {
+            $xml->formatOutput = true;
+        }
 
         return $xml->saveXML();
     }
 
     protected function addItemToSet($item, $url, $mtime = null, $alternateLocaleUrls = [])
     {
+        if (!$alternateLocaleUrls) {
+            return parent::addItemToSet($item, $url, $mtime);
+        }
+
         if ($mtime instanceof \DateTime) {
             $mtime = $mtime->getTimestamp();
         }
@@ -144,27 +150,14 @@ class Definition extends \RainLab\Sitemap\Models\Definition
         $urlSet = $this->makeUrlSet();
         $mtime = $mtime ? date('c', $mtime) : date('c');
 
-        if ($alternateLocaleUrls) {
-            foreach ($alternateLocaleUrls as $alternateLocaleUrl) {
-                $urlElement = $this->makeUrlElement(
-                    $xml,
-                    $alternateLocaleUrl,
-                    $mtime,
-                    $item->changefreq,
-                    $item->priority,
-                    $alternateLocaleUrls
-                );
-                if ($urlElement) {
-                    $urlSet->appendChild($urlElement);
-                }
-            }
-        } else {
+        foreach ($alternateLocaleUrls as $alternateLocaleUrl) {
             $urlElement = $this->makeUrlElement(
                 $xml,
-                $url,
+                $alternateLocaleUrl,
                 $mtime,
                 $item->changefreq,
-                $item->priority
+                $item->priority,
+                $alternateLocaleUrls
             );
             if ($urlElement) {
                 $urlSet->appendChild($urlElement);
@@ -200,7 +193,13 @@ class Definition extends \RainLab\Sitemap\Models\Definition
         $xml = $this->makeXmlObject();
         $urlSet = $xml->createElement('urlset');
         $urlSet->setAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
-        $urlSet->setAttribute('xmlns:xhtml', 'http://www.w3.org/1999/xhtml');
+        if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot/') === false) {
+            // hack to force browser to properly render the XML sitemap
+            $urlSet->setAttribute('xmlns:xhtml', 'http://');
+        } else {
+            // Googlebot needs this URL
+            $urlSet->setAttribute('xmlns:xhtml', 'http://www.w3.org/1999/xhtml');
+        }
         $urlSet->setAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
         $urlSet->setAttribute('xsi:schemaLocation', 'http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd');
 
