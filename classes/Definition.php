@@ -195,7 +195,7 @@ class Definition extends \RainLab\Sitemap\Models\Definition
         $urlSet->setAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
         if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot/') === false) {
             // hack to force browser to properly render the XML sitemap
-            $urlSet->setAttribute('xmlns:xhtml', 'http://');
+            $urlSet->setAttribute('xmlns:xhtml', 'xmlns:xhtml-namespace-definition-URL-here');
         } else {
             // Googlebot needs this URL
             $urlSet->setAttribute('xmlns:xhtml', 'http://www.w3.org/1999/xhtml');
