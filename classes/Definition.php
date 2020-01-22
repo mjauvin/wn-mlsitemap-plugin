@@ -129,9 +129,7 @@ class Definition extends \RainLab\Sitemap\Models\Definition
         $urlSet = $this->makeUrlSet();
         $xml = $this->makeXmlObject();
         $xml->appendChild($urlSet);
-        if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot/') === false) {
-            $xml->formatOutput = true;
-        }
+        $xml->formatOutput = true;
 
         return $xml->saveXML();
     }
