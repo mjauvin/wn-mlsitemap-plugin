@@ -118,7 +118,9 @@ class MenuItemTypes
             return null;
         }
 
-        $cmsPage = Page::loadCached($theme, $pageName);
+        if (!$cmsPage = Page::loadCached($theme, $pageName)) {
+            return null;
+        }
 
         $result = ['items' => []];
 
