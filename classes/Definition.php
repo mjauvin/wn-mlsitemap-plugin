@@ -246,7 +246,14 @@ class Definition extends \RainLab\Sitemap\Models\Definition
 
         $params = [];
         foreach ($paramMap as $paramName => $fieldName) {
-            $params[$paramName] = $item->$fieldName;
+            $parts = [$item->$fieldName];
+            if ($page->baseFileName == 'category') {
+                while ($part = $item->parent) {
+                    $parts[] = $part->slug;
+                    $item = $part;
+                }
+            }
+            $params[$paramName] = implode('/', array_reverse($parts));
         }
 
         $url = $translator->getPathInLocale($page->url, $locale);
