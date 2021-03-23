@@ -23,4 +23,16 @@ class Plugin extends PluginBase
         Event::subscribe(\StudioAzura\MLSitemap\Classes\MenuItemTypes::class);
     }
 
+    public function registerMarkupTags()
+    {
+        return [
+            'filters' => [
+            ],
+            'functions' => [
+                'fullCategorySlug' => function ($item) {
+                    return getFullSlug($item);
+                },
+            ],
+        ];
+    }
 }
