@@ -247,7 +247,7 @@ class Definition extends \RainLab\Sitemap\Models\Definition
         $params = [];
         foreach ($paramMap as $paramName => $fieldName) {
             if ($page->baseFileName == 'category' && $fieldName == 'slug') {
-                $params[$paramName] = getFullSlug($item);
+                $params[$paramName] = $item->getUrl();
             } else {
                 $params[$paramName] = $item->$fieldName;
             }

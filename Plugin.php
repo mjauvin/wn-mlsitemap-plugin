@@ -29,9 +29,6 @@ class Plugin extends PluginBase
             'filters' => [
             ],
             'functions' => [
-                'fullCategorySlug' => function ($item) {
-                    return getFullSlug($item);
-                },
             ],
         ];
     }
