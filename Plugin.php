@@ -11,7 +11,7 @@ class Plugin extends PluginBase
     {
         return [
             'name'        => 'Multilingual Sitemap addon',
-            'description' => 'Adds "All Catalog Products/Categories" to SEO Sitemap item types',
+            'description' => 'Also Adds "All Catalog Products/Categories" to SEO Sitemap item types',
             'author'      => 'StudioAzura',
             'icon'        => 'icon-sitemap'
         ];
@@ -19,7 +19,6 @@ class Plugin extends PluginBase
 
     public function boot()
     {
-        Event::subscribe(\StudioAzura\MLSitemap\Classes\BootHandler::class);
         Event::subscribe(\StudioAzura\MLSitemap\Classes\MenuItemTypes::class);
     }
 
