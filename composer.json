@@ -2,6 +2,6 @@
     "name": "studioazura/mlsitemap",
     "type": "october-plugin",
     "require": {
-        "rainlab/sitemap-plugin": "dev-master"
+        "winter/wn-sitemap-plugin": "dev-main"
     }
 }

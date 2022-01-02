@@ -16,21 +16,30 @@ class MenuItemTypes
     static $supportedPlugins = ['Lovata.Shopaholic', 'OFFLINE.Mall'];
 
     protected $manager = null;
+    protected $catalog = null;
 
     public function __construct()
     {
         $this->manager = PluginManager::instance();
+        foreach (self::$supportedPlugins as $catalogPlugin) {
+            if ($this->manager->exists($catalogPlugin)) {
+                $this->catalog = $catalogPlugin;
+                break;
+            }
+        }
     }
 
     public function subscribe($obEvent)
     {
-        $obEvent->listen('pages.menuitem.listTypes', function () {
-            $items = [];
-            foreach (self::$types['catalog'] as $type) {
-                $items[$type] = '[StudioAzura.MLSitemap] ' . trans('studioazura.mlsitemap::lang.types.' . $type);
-            }
-            return $items;
-        });
+	if ($this->catalog) {
+            $obEvent->listen('pages.menuitem.listTypes', function () {
+                $items = [];
+                foreach (self::$types['catalog'] as $type) {
+                    $items[$type] = '[StudioAzura.MLSitemap] ' . trans('studioazura.mlsitemap::lang.types.' . $type);
+                }
+                return $items;
+            });
+	}
 
         $obEvent->listen('pages.menuitem.getTypeInfo', function ($type) {
             if (!in_array($type, self::$types['catalog'])) {
@@ -51,7 +60,7 @@ class MenuItemTypes
 
     public function resolveMenuItem($type, $item, $url, $theme)
     {
-        if (in_array($type, self::$types['catalog'])) {
+        if (in_array($type, self::$types['catalog']) && $this->catalog) {
             return $this->resolveCatalogMenuItems($type, $item, $url, $theme);
         } else if (in_array($type, self::$types['blog'])) {
             return $this->resolveBlogMenuItems($type, $item, $url, $theme);
@@ -66,16 +75,9 @@ class MenuItemTypes
             return null;
         }
 
-        $catalog = null;
-        $classPrefix = null;
-        foreach (self::$supportedPlugins as $catalogPlugin) {
-            if ($this->manager->exists($catalogPlugin)) {
-                list($author, $plugin) = explode('.', $catalogPlugin);
-                $classPrefix = sprintf('\\%s\\%s', $author, $plugin);
-                $catalog = $catalogPlugin;
-                break;
-            }
-        }
+	list($author, $plugin) = explode('.', $this->catalog);
+	$classPrefix = sprintf('\\%s\\%s', $author, $plugin);
+
         if (!($classPrefix && ($pageName = $item->cmsPage))) {
             return null;
         }
