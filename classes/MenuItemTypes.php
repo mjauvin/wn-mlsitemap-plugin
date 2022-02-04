@@ -89,12 +89,12 @@ class MenuItemTypes
         $filter = 'active';
         if ($type == 'all-catalog-categories') {
             $class = sprintf('%s\\Models\\Category', $classPrefix);
-            if ($catalog == 'OFFLINE.Mall') {
+            if ($this->catalog == 'OFFLINE.Mall') {
                 $filter = '';
             }
         } else if ($type == 'all-catalog-products') {
             $class = sprintf('%s\\Models\\Product', $classPrefix);
-            if ($catalog == 'OFFLINE.Mall') {
+            if ($this->catalog == 'OFFLINE.Mall') {
                 $filter = 'published';
             }
         }
