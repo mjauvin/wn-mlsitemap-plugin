@@ -1,5 +1,5 @@
 {
-    "name": "studioazura/mlsitemap",
+    "name": "studioazura/wn-mlsitemap-plugin",
     "type": "winter-plugin",
     "require": {
         "winter/wn-translate-plugin": "dev-main",
