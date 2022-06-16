@@ -2,8 +2,8 @@
 
 return [
     'plugin' => [
-        'name' => 'Greffon multi-langue pour Winter.Sitemap',
-        'description' => "Ajoute également 'Catégories/Produits du catalogue' aux types d'items",
+        'name' => 'Sitemap Multilingue',
+        'description' => "Greffon multilingue pour le plugin Winter.Sitemap",
     ],
     'types' => [
         'all-catalog-categories' => 'Categories du catalogue',

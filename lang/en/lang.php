@@ -2,8 +2,8 @@
 
 return [
     'plugin' => [
-        'name' => 'Multilingual Sitemap addon',
-        'description' => 'Also Adds "All Catalog Products/Categories" to SEO Sitemap item types',
+        'name' => 'Multilang Sitemap',
+        'description' => 'Multilang add-on for Winter.Sitemap plugin',
     ],
     'types' => [
         'all-catalog-categories' => 'All Catalog Categories',
