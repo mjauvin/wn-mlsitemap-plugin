@@ -1,6 +1,8 @@
 {
     "name": "studioazura/wn-mlsitemap-plugin",
+    "description": "Multi-lingual add-on for winter/wn-sitemap-plugin",
     "type": "winter-plugin",
+    "license": "MIT",
     "require": {
         "winter/wn-translate-plugin": "dev-main",
         "winter/wn-sitemap-plugin": "dev-main"
