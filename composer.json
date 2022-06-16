@@ -4,7 +4,6 @@
     "type": "winter-plugin",
     "license": "MIT",
     "require": {
-        "winter/wn-translate-plugin": "dev-main",
         "winter/wn-sitemap-plugin": "dev-main"
     }
 }
