@@ -14,7 +14,7 @@ App::before(function ($request) {
             $definition = Definition::where('theme', $themeActive)->firstOrFail();
         }
         catch (ModelNotFound $e) {
-            Log::info(trans('rainlab.sitemap::lang.definition.not_found'));
+            Log::info(trans('winter.sitemap::lang.definition.not_found'));
 
             return App::make(Controller::class)->setStatusCode(404)->run('/404');
         }

@@ -5,13 +5,13 @@ use System\Classes\PluginBase;
 
 class Plugin extends PluginBase
 {
-    public $require = ['RainLab.Sitemap'];
+    public $require = ['Winter.Sitemap', 'Winter.Translate'];
 
     public function pluginDetails()
     {
         return [
-            'name'        => 'Multilingual Sitemap addon',
-            'description' => 'Also Adds "All Catalog Products/Categories" to SEO Sitemap item types',
+            'name'        => 'studioazura.mlsitemap::lang.plugin.name',
+            'description' => 'studioazura.mlsitemap::lang.plugin.description',
             'author'      => 'StudioAzura',
             'icon'        => 'icon-sitemap'
         ];
@@ -19,16 +19,6 @@ class Plugin extends PluginBase
 
     public function boot()
     {
-        Event::subscribe(\StudioAzura\MLSitemap\Classes\MenuItemTypes::class);
-    }
-
-    public function registerMarkupTags()
-    {
-        return [
-            'filters' => [
-            ],
-            'functions' => [
-            ],
-        ];
+        Event::subscribe(Classes\MenuItemTypes::class);
     }
 }

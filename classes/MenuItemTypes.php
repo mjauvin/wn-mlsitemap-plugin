@@ -111,7 +111,7 @@ class MenuItemTypes
 
     public function resolveBlogMenuItems($type, $item, $url, $theme)
     {
-        if (!(in_array($type, self::$types['blog']) && $this->manager->exists('RainLab.Blog'))) {
+        if (!(in_array($type, self::$types['blog']) && $this->manager->exists('Winter.Blog'))) {
             return null;
         }
 
@@ -126,7 +126,7 @@ class MenuItemTypes
         $result = ['items' => []];
 
         $filter = '';
-        $classPrefix = '\\RainLab\\Blog';
+        $classPrefix = '\\Winter\\Blog';
         if ($type == 'all-blog-categories') {
             $class = sprintf('%s\\Models\\Category', $classPrefix);
             $query = $class::orderBy('name', 'ASC');

@@ -5,14 +5,15 @@ use Event;
 use Request;
 use Cms\Classes\Page;
 use Cms\Classes\Theme;
-use October\Rain\Router\Router;
-use RainLab\Translate\Models\Locale;
-use RainLab\Translate\Classes\Translator;
+use Winter\Storm\Router\Router;
+use Winter\Translate\Models\Locale;
+use Winter\Translate\Classes\Translator;
+use Winter\Sitemap\Models\Definition as BaseDefinition;
 
 /**
  * Definition Model
  */
-class Definition extends \RainLab\Sitemap\Models\Definition
+class Definition extends BaseDefinition
 {
     public function generateSitemap()
     {

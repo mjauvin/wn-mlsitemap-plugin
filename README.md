@@ -1,4 +1,4 @@
-Add Multilang capabilities to Rainlab.Sitemap plugin
+Add Multilang capabilities to Winter.Sitemap plugin
 
 Add the following listTypes:
 
