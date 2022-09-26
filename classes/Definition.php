@@ -192,7 +192,7 @@ class Definition extends BaseDefinition
         $xml = $this->makeXmlObject();
         $urlSet = $xml->createElement('urlset');
         $urlSet->setAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
-        if (!str_contains(Request::server('HTTP_USER_AGENT'), 'Googlebot/')) {
+        if (!str_contains(Request::server('HTTP_USER_AGENT', ''), 'Googlebot/')) {
             // hack to force browser to properly render the XML sitemap
             $urlSet->setAttribute('xmlns:xhtml', 'xmlns:xhtml-namespace-definition-URL-here');
         } else {
