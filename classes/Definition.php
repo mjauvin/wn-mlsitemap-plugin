@@ -205,7 +205,7 @@ class Definition extends BaseDefinition
         return $this->urlSet = $urlSet;
     }
 
-    public static function getMenuItem($page, $menuItem, $paramName)
+    public static function getMenuItem($page, $menuItem, $paramName, $url)
     {
         $result = [];
 
@@ -222,6 +222,7 @@ class Definition extends BaseDefinition
 
         $result['title'] = $menuItem->name;
         $result['url'] = $pageUrl;
+        $result['active'] = $pageUrl === $url;
         $result['mtime'] = $menuItem->updated_at;
 
         return $result;

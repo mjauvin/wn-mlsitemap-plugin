@@ -31,7 +31,7 @@ class MenuItemTypes
 
     public function subscribe($obEvent)
     {
-	if ($this->catalog) {
+        if ($this->catalog) {
             $obEvent->listen('pages.menuitem.listTypes', function () {
                 $items = [];
                 foreach (self::$types['catalog'] as $type) {
@@ -39,7 +39,7 @@ class MenuItemTypes
                 }
                 return $items;
             });
-	}
+        }
 
         $obEvent->listen('pages.menuitem.getTypeInfo', function ($type) {
             if (!in_array($type, self::$types['catalog'])) {
@@ -75,8 +75,8 @@ class MenuItemTypes
             return null;
         }
 
-	list($author, $plugin) = explode('.', $this->catalog);
-	$classPrefix = sprintf('\\%s\\%s', $author, $plugin);
+        list($author, $plugin) = explode('.', $this->catalog);
+        $classPrefix = sprintf('\\%s\\%s', $author, $plugin);
 
         if (!($classPrefix && ($pageName = $item->cmsPage))) {
             return null;
@@ -104,7 +104,7 @@ class MenuItemTypes
             $query = $query->where($filter, true);
         }
         foreach ($query->get() as $item) {
-            $result['items'][] =  Definition::getMenuItem($cmsPage, $item, 'slug');
+            $result['items'][] =  Definition::getMenuItem($cmsPage, $item, 'slug', $url);
         }
         return $result['items'];
     }
@@ -136,7 +136,7 @@ class MenuItemTypes
         }
 
         foreach ($query->get() as $item) {
-            $result['items'][] =  Definition::getMenuItem($cmsPage, $item, 'slug');
+            $result['items'][] =  Definition::getMenuItem($cmsPage, $item, 'slug', $url);
         }
         return $result['items'];
     }
