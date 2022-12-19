@@ -248,11 +248,7 @@ class Definition extends BaseDefinition
 
         $params = [];
         foreach ($paramMap as $paramName => $fieldName) {
-            if ($page->baseFileName == 'category' && $fieldName == 'slug') {
-                $params[$paramName] = $item->url;
-            } else {
-                $params[$paramName] = $item->$fieldName;
-            }
+            $params[$paramName] = $item->$fieldName ?? $item->url ?? null;
         }
 
         $url = $translator->getPathInLocale($page->url, $locale);
