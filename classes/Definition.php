@@ -205,12 +205,12 @@ class Definition extends BaseDefinition
         return $this->urlSet = $urlSet;
     }
 
-    public static function getMenuItem($page, $menuItem, $paramName, $url)
+    public static function getMenuItem($page, $menuItem, $paramName, $url, $locale = null)
     {
         $result = [];
 
-        $defaultLocale = Locale::getDefault()->code;
-        $pageUrl = self::getPageLocaleUrl($page, $menuItem, $defaultLocale, [$paramName => 'slug']);
+        $locale = $locale ?: Locale::getDefault()->code;
+        $pageUrl = self::getPageLocaleUrl($page, $menuItem, $locale, [$paramName => 'slug']);
 
         $alternateLocales = array_keys(Locale::listEnabled());
 
