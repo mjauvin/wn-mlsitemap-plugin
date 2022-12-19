@@ -222,7 +222,7 @@ class Definition extends BaseDefinition
 
         $result['title'] = $menuItem->name;
         $result['url'] = $pageUrl;
-        $result['active'] = $pageUrl === $url;
+        $result['isActive'] = $pageUrl == $url;
         $result['mtime'] = $menuItem->updated_at;
 
         return $result;
