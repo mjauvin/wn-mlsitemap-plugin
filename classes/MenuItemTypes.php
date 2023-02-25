@@ -158,14 +158,6 @@ class MenuItemTypes
         $locale = $locale ?: Locale::getDefault()->code;
         $pageUrl = self::getPageLocaleUrl($page, $menuItem, $locale, [$paramName => 'slug']);
 
-        #$alternateLocales = array_keys(Locale::listEnabled());
-
-        #if (count($alternateLocales) > 1) {
-        #    foreach ($alternateLocales as $locale) {
-        #        $result['alternate_locale_urls'][$locale] = self::getPageLocaleUrl($page, $menuItem, $locale, [$paramName => 'slug']);
-        #    }
-        #}
-
         $result['title'] = $menuItem->name;
         $result['url'] = $pageUrl;
         $result['isActive'] = $pageUrl == $url;
