@@ -244,9 +244,7 @@ class Definition extends BaseDefinition
             $page->rewriteTranslatablePageUrl($locale);
         }
 
-        if (method_exists($item, 'lang')) {
-            $item->lang($locale);
-        }
+        @$item->lang($locale);
 
         $params = [];
         foreach ($paramMap as $paramName => $fieldName) {
